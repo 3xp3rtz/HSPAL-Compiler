@@ -1,5 +1,7 @@
-From https://esolangs.org/wiki/Hexadecimal_Stacking_Pseudo-Assembly_Language: 
+From https://esolangs.org/wiki/Hexadecimal_Stacking_Pseudo-Assembly_Language:
+
 "The Hexadecimal Stacking Pseudo-Assembly Language (HSPAL) is a programming language...in which a program is represented by a list of six-digit [hexadecimal] numbers separated by line breaks".
+
 By taking a look at the documentation of the language (found here https://docs.google.com/document/d/1YkG501LjlcrESdrlddE5qEb157w9W0_BeS-zngQJEP4/edit), we can write our own compiler to run HSPAL instructions.
 
 The manner in which I did so was (unnecessarily inefficient but nonetheless) by maintaining a dictionary of arrays indexed hexadecimally to represent stacks, pushing and popping using *append()* and *pop()*, respectively. By running the compiler with print statements denoting the command bring run, we can see that the first segment of code can be shown as:
