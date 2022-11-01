@@ -93,7 +93,7 @@ Roughly translating this, we attain:
 18    Pop iterator off of stack[01]
 19-21 Set top of stack[ff] to 0x48 - top of stack[ff]
 22    Sum top two elements of stack[ff]
-23-25 Set top of stack[01] to whether top two elements of stack[ff] are equal
+23-25 Set top of stack[01] to whether top of stack[ff] is equal to 0
 26-27 If stack[01] is 0, exit the program
 28-30 Square last element of stack[ff]
 31-32 Push 0x2971 onto stack[ff]
@@ -104,10 +104,10 @@ Let's try simplifying the code again:
 ```
 18    Remove for loop iterator from stack[01]
 19-22 Set stack[ff] to (0x48 - top of stack[ff] + second from top of stack[ff])
-23-27 Exit if top two elements of stack[ff] are not equal
+23-27 Exit if top element of stack[ff] is not 0
 28-35 Exit if stack[ff]^2 != 0x2971
 ```
-From the flag format, we know that the last character of the flag should be `}`, also known as character `125`/`}`.
+From the flag format, we know that the last character of the flag should be `}`, also known as character `125`/`}`. Using this, we can calculate what the second last character of the flag will be. As the top element of the stack after the operations `0x48 - top of stack[ff] (which is 125/0x7b) + second on stack[ff]` must equal 0, we can get that `0x48 - 0x7b + second on stack[ff] = 0`. Solving this leaves us with `second on stack[ff] = 0x31`.
 
 As we are multiplying the final element of `stack[ff]` by itself, we are effectively squaring the number and comparing it to `0x2971`. We can then calculate the square root in order to get what `stack[ff]` is: `103`, or `0x67`. Using the formula we got from before, `0x48 - top of stack[ff] + second on stack[ff]` must equal `103` or `0x67`. Subtracting it from the other constant of `0x48`, we get `-0x1f` or `-31`, and thus our new formula becomes: `second on stack[ff] - top of stack[ff] - 0x1f`.
 
