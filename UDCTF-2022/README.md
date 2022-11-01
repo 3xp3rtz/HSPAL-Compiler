@@ -1,5 +1,5 @@
 # Writeup for `Heard you like stacks`, UDCTF 2022
-From the ([`esolangs.org`] (https://esolangs.org/wiki/Hexadecimal_Stacking_Pseudo-Assembly_Language)) page on HSPAL:
+From the ([`esolangs.org`](https://esolangs.org/wiki/Hexadecimal_Stacking_Pseudo-Assembly_Language)) page on HSPAL:
 
 "The Hexadecimal Stacking Pseudo-Assembly Language (HSPAL) is a programming language...in which a program is represented by a list of six-digit [hexadecimal] numbers separated by line breaks".
 
