@@ -29,10 +29,10 @@ The manner in which I did so was (unnecessarily inefficient but nonetheless) by 
 5 400200 - push register to stack[02], register = 0
 ...
 ```
-The program loops after reaching instruction #17, which jumps back to instruction #3 if #16 results in not skipping the following command. Reading the code more closely, #15 pushes a value to stack[00] which is non-zero if the top two elements on stack[01] are the same. #13 and #14 pushes an element of `0` onto stack[01], #11-12 duplicate the top element of stack[01], #8-10 subtracts the the top element of stack[01] from stack[02], pushing the result back onto stack[01], #6-7 pushes `1` onto stack[01], #4-5 moves the top element of stack[01] to stack[02], and finally #3 simply adds a character from input to stack[ff]. Not within the loop is #0-1 which adds `27` to the top of stack[01] and #2 which labels an instruction.
+The program loops after reaching instruction #17, which jumps back to instruction #3 if #16 results in not skipping the following command. Reading the code more closely, #15 pushes a value to `stack[00]` which is non-zero if the top two elements on `stack[01]` are the same. #13 and #14 pushes an element of `0x0` onto `stack[01]`, #11-12 duplicate the top element of `stack[01]`, #8-10 subtracts the the top element of `stack[01]` from `stack[02]`, pushing the result back onto `stack[01]`, #6-7 pushes `0x1` onto `stack[01]`, #4-5 moves the top element of `stack[01]` to `stack[02]`, and finally #3 simply adds a character from input to `stack[ff]`. Not within the loop is #0-1 which adds `27` to the top of `stack[01]` and #2 which labels an instruction.
 Reordering these and simplifying it leaves us with:
 ```
-0-1   Add 27 to stack[01]
+0-1   Add 0x27 to stack[01]
 2     Mark loop
 3     Add input char to stack[ff]
 4-5   Move top of stack[01] into stack[02]
@@ -45,10 +45,10 @@ Reordering these and simplifying it leaves us with:
 ```
 Simplifying further and running through the first loop with the we can attain
 ```
-0-1   Add 27 to stack[01]
+0-1   Add 0x27 to stack[01]
 Loop: 
 3     Get input
-4-5   Move 27 to stack[02]
+4-5   Move 0x27 to stack[02]
 6-10  Subtract 1 from stack[02], move result to stack[01]
 11-12 Duplicate stack[01]
 13-15 Check if top element of stack[01] is equal to 0
@@ -56,9 +56,48 @@ Loop:
 ```
 This seems very much like a for loop, once we simplify one final time. (I've removed unrelated commands for readability.)
 ```
-0-1   Add 27 to stack[01]   Iterator
+0-1   Add 0x27 to stack[01]   Iterator
 Loop:
 4-5   Move iterator to stack[02]
 6-10  Subtract 1 from iterator
 13-16 If iterator == 0, jump to beginning of loop
 ```
+From this, we can gather that we will read in `0x27` or 39 characters onto `stack[ff]`, but in reverse order, as we are pushing onto a stack. Looking past the input, we can read through #17-33:
+```
+17 410100 - register = pop stack[01]
+18 200048 - r = 0048
+19 40ff00 - push register to stack[ff], register = 0
+20 22ff00 - push sub stack[ff], stack[ff] to stack[ff]
+21 21ff00 - push add stack[ff], stack[ff] to stack[ff]
+22 200000 - r = 0000
+23 40ff00 - push register to stack[ff], register = 0
+24 30ff01 - push equals (stack[ff] == stack[ff]) to stack[ff]
+25 030100 - skip if (pop stack 01)
+26 42ff00 - register = last elem of stack[ff]
+27 40ff00 - push register to stack[ff], register = 0
+28 23ff00 - push mult stack[ff], stack[ff] to stack[ff]
+29 202971 - r = 2971
+30 40ff00 - push register to stack[ff], register = 0
+31 30ff01 - push equals (stack[ff] == stack[ff]) to stack[ff]
+32 030100 - skip if (pop stack 01)
+33 04d34d - exited with status code d34d
+```
+Roughly translating this, we attain:
+```
+17    Pop iterator off of stack[01]
+18-20 Set top of stack[ff] to 0x48 - top of stack[ff]
+21    Sum top two elements of stack[ff]
+22-26 Register = stack[ff] if stack[ff] is not 0 else 0
+27-28 Square last element of stack[ff]
+29-30 Push 0x2971 onto stack[ff]
+31-33 Exit if last two elements of stack[ff] are not equal
+```
+Looking at lines #31-33, the last element of `stack[ff]` will never be anything more than `0x0` if #22-26 are not triggered, which will equal `0x0` if the result of #20-21 is not `0x0`. This tells us that the condition in #20-21 must equal `0x0`, meaning `(0x48 - top of stack[ff] + second on stack[ff])` must equal `0x0`. Let's try simplifying the code again:
+```
+17    Remove for loop iterator from stack[01]
+18-21 Set stack[ff] to (0x48 - top of stack[ff] + second from top of stack[ff])
+22-26 Register = stack[ff] if stack[ff] is not 0 else 0
+27-33 Exit if stack[ff]^2 != 0x2971
+```
+As we are multiplying the final element of `stack[ff]` by itself, we are effectively squaring the number and comparing it to `0x2971`. We can then calculate the square root in order to get what `stack[ff]` is: `103`, or `0x67`. Using the formula we got from before, `0x48 - top of stack[ff] + second on stack[ff]` must equal `103` or `0x67`. Subtracting it from the other constant of `0x48`, we get `-0x1f` or `-31`, and thus our new formula becomes: `second on stack[ff] - top of stack[ff] - 0x1f`.
+
