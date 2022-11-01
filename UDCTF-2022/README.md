@@ -71,7 +71,7 @@ From this, we can gather that we will read in `0x27` or 39 characters onto `stac
 21 21ff00 - push add stack[ff], stack[ff] to stack[ff]
 22 200000 - r = 0000
 23 40ff00 - push register to stack[ff], register = 0
-24 30ff01 - push equals (stack[ff] == stack[ff]) to stack[ff]
+24 30ff01 - push equals (stack[ff] == stack[ff]) to stack[01]
 25 030100 - skip if (pop stack 01)
 26 42ff00 - register = last elem of stack[ff]
 27 40ff00 - push register to stack[ff], register = 0
