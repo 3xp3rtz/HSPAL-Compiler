@@ -48,7 +48,7 @@ Reordering these and simplifying it leaves us with:
 15    Check if top two elements on stack[01] are equal, push result to stack[01]
 16    Loop if stack[01] is non-zero
 ```
-Simplifying further and running through the first loop with the we can attain
+Simplifying further and running through the first loop with the we can attain:
 ```
 0-1   Add 0x27 to stack[01]
 Loop: 
@@ -69,40 +69,45 @@ Loop:
 ```
 From this, we can gather that we will read in `0x27` or 39 characters onto `stack[ff]`, but in reverse order, as we are pushing onto a stack. Looking past the input, we can read through #17-33:
 ```
-17 410100 - register = pop stack[01]
-18 200048 - r = 0048
-19 40ff00 - push register to stack[ff], register = 0
-20 22ff00 - push sub stack[ff], stack[ff] to stack[ff]
-21 21ff00 - push add stack[ff], stack[ff] to stack[ff]
-22 200000 - r = 0000
-23 40ff00 - push register to stack[ff], register = 0
-24 30ff01 - push equals (stack[ff] == stack[ff]) to stack[01]
-25 030100 - skip if (pop stack 01)
-26 42ff00 - register = last elem of stack[ff]
-27 40ff00 - push register to stack[ff], register = 0
-28 23ff00 - push mult stack[ff], stack[ff] to stack[ff]
-29 202971 - r = 2971
-30 40ff00 - push register to stack[ff], register = 0
-31 30ff01 - push equals (stack[ff] == stack[ff]) to stack[ff]
-32 030100 - skip if (pop stack 01)
-33 04d34d - exited with status code d34d
+18 410100 - register = pop stack[01]
+19 200048 - r = 0048
+20 40ff00 - push register to stack[ff], register = 0
+21 22ff00 - push sub stack[ff], stack[ff] to stack[ff]
+22 21ff00 - push add stack[ff], stack[ff] to stack[ff]
+23 200000 - r = 0000
+24 40ff00 - push register to stack[ff], register = 0
+25 30ff01 - push equals (stack[ff] == stack[ff]) to stack[ff]
+26 030100 - skip if (pop stack 01)
+27 04d34d - exited with status code d34d
+28 42ff00 - register = last elem of stack[ff]
+29 40ff00 - push register to stack[ff], register = 0
+30 23ff00 - push mult stack[ff], stack[ff] to stack[ff]
+31 202971 - r = 2971
+32 40ff00 - push register to stack[ff], register = 0
+33 30ff01 - push equals (stack[ff] == stack[ff]) to stack[ff]
+34 030100 - skip if (pop stack 01)
+35 04d34d - exited with status code d34d
 ```
 Roughly translating this, we attain:
 ```
-17    Pop iterator off of stack[01]
-18-20 Set top of stack[ff] to 0x48 - top of stack[ff]
-21    Sum top two elements of stack[ff]
-22-26 Register = stack[ff] if stack[ff] is not 0 else 0
-27-28 Square last element of stack[ff]
-29-30 Push 0x2971 onto stack[ff]
-31-33 Exit if last two elements of stack[ff] are not equal
+18    Pop iterator off of stack[01]
+19-21 Set top of stack[ff] to 0x48 - top of stack[ff]
+22    Sum top two elements of stack[ff]
+23-25 Set top of stack[01] to whether top two elements of stack[ff] are equal
+26-27 If stack[01] is 0, exit the program
+28-30 Square last element of stack[ff]
+31-32 Push 0x2971 onto stack[ff]
+33-35 Exit if last two elements of stack[ff] are not equal
 ```
-Looking at lines #31-33, the last element of `stack[ff]` will never be anything more than `0x0` if #22-26 are not triggered, which will equal `0x0` if the result of #20-21 is not `0x0`. This tells us that the condition in #20-21 must equal `0x0`, meaning `(0x48 - top of stack[ff] + second on stack[ff])` must equal `0x0`. Let's try simplifying the code again:
+Looking at lines #26-27, the program will exit if the top of `stack[01]` is `0x0`, which is set by whether the top two elements of `stack[ff]` are equal. 
+Let's try simplifying the code again:
 ```
-17    Remove for loop iterator from stack[01]
-18-21 Set stack[ff] to (0x48 - top of stack[ff] + second from top of stack[ff])
-22-26 Register = stack[ff] if stack[ff] is not 0 else 0
-27-33 Exit if stack[ff]^2 != 0x2971
+18    Remove for loop iterator from stack[01]
+19-22 Set stack[ff] to (0x48 - top of stack[ff] + second from top of stack[ff])
+23-27 Exit if top two elements of stack[ff] are not equal
+28-35 Exit if stack[ff]^2 != 0x2971
 ```
+From the flag format, we know that the last character of the flag should be `}`, also known as character `125`/`}`.
+
 As we are multiplying the final element of `stack[ff]` by itself, we are effectively squaring the number and comparing it to `0x2971`. We can then calculate the square root in order to get what `stack[ff]` is: `103`, or `0x67`. Using the formula we got from before, `0x48 - top of stack[ff] + second on stack[ff]` must equal `103` or `0x67`. Subtracting it from the other constant of `0x48`, we get `-0x1f` or `-31`, and thus our new formula becomes: `second on stack[ff] - top of stack[ff] - 0x1f`.
 
