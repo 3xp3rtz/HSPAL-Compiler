@@ -107,7 +107,7 @@ Let's try simplifying the code again:
 23-27 Exit if top element of stack[ff] is not 0
 28-35 Exit if stack[ff]^2 != 0x2971
 ```
-From the flag format, we know that the last character of the flag should be `}`, also known as character `125`/`0x7b`. Using this, we can calculate what the second last character of the flag will be. As the top element of the stack after the operations `0x48 - top of stack[ff] (which is 125/0x7b) + second on stack[ff]` must equal 0, we can get that `0x48 - 0x7b + second on stack[ff] = 0`. Solving this leaves us with `second on stack[ff] = 0x33`. This resolves #18-27, so let's take a look at #28-35.
+From the flag format of `UDCTF{flag}`, we know that the last character of the flag should be `}`, also known as character `125`/`0x7b`. Using this, we can calculate what the second last character of the flag will be. As the top element of the stack after the operations `0x48 - top of stack[ff] (which is 125/0x7b) + second on stack[ff]` must equal 0, we can get that `0x48 - 0x7b + second on stack[ff] = 0`. Solving this leaves us with `second on stack[ff] = 0x33`. This resolves #18-27, so let's take a look at #28-35.
 
 Since the last element of the stack squared must equal, we can calculate the square root in order to get what `stack[ff]` should be: `103`, or `g`. 
 
