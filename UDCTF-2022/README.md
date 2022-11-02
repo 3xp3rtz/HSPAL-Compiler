@@ -132,5 +132,8 @@ These all seem to be pushing random numbers on to seemingly random stacks. Let's
 113 030100 - skip if (pop stack 01)
 114 04dead - exited with status code dead
 ```
-Looking through our document of stacks, we find that `stack[6c] = ['0x2', '0x70']`. As #109 subtracts the second from the top from the top, or `0x70 - 0x2`, the pushed result will be `0x6e`. 
+Looking through our document of stacks, we find that `stack[6c] = ['0x2', '0x70']`. As #109 subtracts the second from the top from the top, or `0x70 - 0x2`, the pushed result will be `0x6e`. In lines #110 to 114, we skip the `exit` command only if the register set from the top of `stack[ff]` is equal to the top of `stack[6c]`, which we know to be `0x6e`, therefore we know the next last character in the flag is `0x6e`, or `n`.
 
+The rest of the operations check in a similar manner, where a register is pushed onto a stack with a value, an operation is performed between them, and equated to the next last character of the flag. If they match, the program continues, thus the next last character of the flag must be the result of the operation between the register and the existing element on the stack in question.
+
+Running through the entire code, we finally reach the end after calculating the correct flag and get a fun easter egg of the register being set to `0x1337` before exiting the program with exit code `0000` instead of `dead` or `d34d` and yielding our flag: `UDCTF{h4v1ng_s0_much_fun_w1th_350l4ng5}`.
