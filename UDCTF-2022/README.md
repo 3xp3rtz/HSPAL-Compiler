@@ -107,7 +107,30 @@ Let's try simplifying the code again:
 23-27 Exit if top element of stack[ff] is not 0
 28-35 Exit if stack[ff]^2 != 0x2971
 ```
-From the flag format, we know that the last character of the flag should be `}`, also known as character `125`/`}`. Using this, we can calculate what the second last character of the flag will be. As the top element of the stack after the operations `0x48 - top of stack[ff] (which is 125/0x7b) + second on stack[ff]` must equal 0, we can get that `0x48 - 0x7b + second on stack[ff] = 0`. Solving this leaves us with `second on stack[ff] = 0x31`.
+From the flag format, we know that the last character of the flag should be `}`, also known as character `125`/`0x7b`. Using this, we can calculate what the second last character of the flag will be. As the top element of the stack after the operations `0x48 - top of stack[ff] (which is 125/0x7b) + second on stack[ff]` must equal 0, we can get that `0x48 - 0x7b + second on stack[ff] = 0`. Solving this leaves us with `second on stack[ff] = 0x33`. This resolves #18-27, so let's take a look at #28-35.
 
-As we are multiplying the final element of `stack[ff]` by itself, we are effectively squaring the number and comparing it to `0x2971`. We can then calculate the square root in order to get what `stack[ff]` is: `103`, or `0x67`. Using the formula we got from before, `0x48 - top of stack[ff] + second on stack[ff]` must equal `103` or `0x67`. Subtracting it from the other constant of `0x48`, we get `-0x1f` or `-31`, and thus our new formula becomes: `second on stack[ff] - top of stack[ff] - 0x1f`.
+Since the last element of the stack squared must equal, we can calculate the square root in order to get what `stack[ff]` should be: `103`, or `g`. 
+
+Let's look briefly at the next several lines.
+```
+35 20001b - r = 001b
+36 400300 - push register to stack[03], register = 0
+37 20000e - r = 000e
+38 401f00 - push register to stack[1f], register = 0
+39 200009 - r = 0009
+40 407c00 - push register to stack[7c], register = 0
+41 200015 - r = 0015
+42 40e600 - push register to stack[e6], register = 0
+...
+```
+These all seem to be pushing random numbers on to seemingly random stacks. Let's just put these all aside for now, keeping track of what is added to which stack in a separate document, such as in `stacks.content`. Take a look at the code up until the next `exit` instruction:
+```
+109 226c00 - push sub stack[6c], stack[6c] to stack[6c]
+110 41ff00 - register = pop stack[ff]
+111 406c00 - push register to stack[6c], register = 0
+112 306c01 - push equals (stack[6c] == stack[6c]) to stack[6c]
+113 030100 - skip if (pop stack 01)
+114 04dead - exited with status code dead
+```
+Looking through our document of stacks, we find that `stack[6c] = ['0x2', '0x70']`. As #109 subtracts the second from the top from the top, or `0x70 - 0x2`, the pushed result will be `0x6e`. 
 
