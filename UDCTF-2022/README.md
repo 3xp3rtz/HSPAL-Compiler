@@ -5,7 +5,7 @@ From the [`esolangs.org`](https://esolangs.org/wiki/Hexadecimal_Stacking_Pseudo-
 
 By taking a look at the [documentation](https://docs.google.com/document/d/1YkG501LjlcrESdrlddE5qEb157w9W0_BeS-zngQJEP4/edit) of the language, we can write our own compiler to run HSPAL instructions.
 
-The manner in which I did so was (unnecessarily inefficient but nonetheless) by maintaining a dictionary of arrays indexed hexadecimally to represent stacks, pushing and popping using *append()* and *pop()*, respectively. 
+The manner in which I did so was ~~using stdin instead of reading files but nonetheless~~ by maintaining a dictionary of arrays indexed hexadecimally to represent stacks, pushing and popping using *append()* and *pop()*, respectively. 
 
 # Going through the code
 
