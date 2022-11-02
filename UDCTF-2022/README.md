@@ -123,7 +123,7 @@ Let's look briefly at the next several lines.
 42 40e600 - push register to stack[e6], register = 0
 ...
 ```
-These all seem to be pushing random numbers on to seemingly random stacks. Let's just put these all aside for now, keeping track of what is added to which stack in a separate document, such as in `stacks.content`. Take a look at the code up until the next `exit` instruction:
+These all seem to be pushing random numbers on to seemingly random stacks. Let's just put these all aside for now, keeping track of what is added to which stack in a separate document, such as in `stacks.content`. Take a look at the code after these `r = x, push register to...` instructions up until the next `exit` command:
 ```
 109 226c00 - push sub stack[6c], stack[6c] to stack[6c]
 110 41ff00 - register = pop stack[ff]
