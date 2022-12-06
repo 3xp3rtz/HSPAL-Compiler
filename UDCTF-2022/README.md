@@ -9,7 +9,7 @@ The manner in which I did so was ~~using stdin instead of reading files but none
 
 # Going through the code
 
-By running the compiler with print statements denoting the command bring run, we can see that the first segment of code can be shown as:
+By running the compiler with print statements denoting the command being run, we can see that the first segment of code can be shown as:
 ```
 0 200027 - r = 0027
 1 400100 - push register to stack[01], register = 0
